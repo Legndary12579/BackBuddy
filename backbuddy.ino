@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <MPU9250_asukiaaa.h>
-
+#define MOTOR_PIN 13
 MPU9250_asukiaaa mySensor;
 
 float baseline = 0;
@@ -18,6 +18,8 @@ void setup() {
   Wire.begin(21, 22);
   mySensor.setWire(&Wire);
   mySensor.beginAccel();
+  pinMode(MOTOR_PIN, OUTPUT);
+  digitalWrite(MOTOR_PIN, LOW);
   Serial.print("calling waitForConsent()");
   waitForConsent(); 
   calibrate();
@@ -72,6 +74,9 @@ void loop() {
       slouchStartTime = millis();
     } else if (millis() - slouchStartTime >= requiredSlouchDuration) {
       Serial.println("SLOUCHING TOO LONG - VIBRATE!");
+      digitalWrite(MOTOR_PIN, HIGH);  // vibrate
+      delay(500);                      
+      digitalWrite(MOTOR_PIN, LOW);   // stop
     }
   } else {
     currentlySlouching = false;
